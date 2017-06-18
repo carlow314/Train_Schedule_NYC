@@ -1,1 +1,79 @@
+<!DOCTYPE html>
+<html lang="en">
 
+<head>
+  <title> Boston T Schedule</title>
+  <meta charset="UTF-8">
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
+  <script src="https://code.jquery.com/jquery-3.2.1.min.js" integrity="sha256-hwg4gsxgFZhOsEEamdOYGBf13FyQuiTwlAQgxVSNgt4=" crossorigin="anonymous"></script>
+  <link rel="stylesheet" type="text/css" href="assets/css/style.css">
+  <script src="https://www.gstatic.com/firebasejs/4.1.2/firebase.js"></script>
+  <script src="https://cdn.jsdelivr.net/momentjs/2.12.0/moment.min.js"></script>
+</head>
+
+<body>
+  <div class="container">
+    <div class="jumbotron jumbotron-fluid">
+      <h1 class="text-center" id="header"> Boston T Schedule</h1>
+      <hr>
+      <h3 class="text-center time"> Current Time: <span id="current-time"></h3>
+    </div>
+  </div>
+  <div class="container schedule-container">
+    <div class="row">
+      <div class="col-md-8 col-md-offset-1 col-lg-8 col-lg-offset-1">
+        <div class="panel">
+          <div class="panel-heading desc">
+            <h3 class="panel-title text-center">TRAIN SCHEDULE</h3>
+          </div>
+          <div class="panel-body">
+            <table class="tschedule" border="1" frame="void" rules="rows">
+              <thead>
+                <tr>
+                  <th class="col-lg-3 col-md-3 text-center">Train Name</th>
+                  <th class="col-lg-2 col-md-2 text-center">Destination</th>
+                  <th class="col-lg-2 col-md-2 text-center">Frequency(minutes)</th>
+                  <th class="col-lg-2 col-md-2 text-center">Next Arrival</th>
+                  <th class="col-lg-2 col-md-2 text-center">Minutes Away</th>
+                </tr>
+                <thead>
+                  <tbody id="tschedule">
+                    <tr></tr>
+                  </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+      <div class="col-md-3">
+        <div class="panel">
+          <div class="panel-heading desc ">
+            <h3 class="panel-title text-center">Add Train</h3>
+          </div>
+          <div class="panel-body">
+            <form>
+              <div class="form-group">
+                <label for="name">Train Name </label>
+                <input type="text" class="form-control" id="nameInput" placeholder="Green line-Inbound">
+              </div>
+              <div class="form-group">
+                <label for="dest">Destination </label>
+                <input type="text" class="form-control" id="destInput" placeholder="Lechmere Station">
+              </div>
+              <div class="form-group">
+                <label class="nextTrain" for="nextTrain">First Train Time</label><label class="milTime">&nbsp;</label>
+                <input type="text" class="form-control" id="timeInput" placeholder="00:00">
+              </div>
+              <div class="form-group">
+                <label for="minsAway">Frequency - (mins) </label>
+                <input type="number" class="form-control" id="freqInput" placeholder="15">
+              </div>
+              <button type="submit" class="btn btn-default center-block" id="submit">Add Train</button>
+            </form>
+          </div>
+        </div>
+      </div>
+    </div>
+</body>
+<script src="assets/javascript/app.js"></script>
+
+</html>

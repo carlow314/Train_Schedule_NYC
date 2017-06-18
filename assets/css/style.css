@@ -1,0 +1,33 @@
+body {
+  background-image: url("../images/background.jpg");
+  background-repeat: no-repeat;
+  -webkit-background-size: cover;
+  -moz-background-size: cover;
+  -o-background-size: cover;
+  background-size: cover;
+}
+
+.jumbotron {
+  background: rgb(105, 105, 105);
+  background: rgba(105, 105, 105, .5);
+  padding-top: 0;
+  padding-bottom: 10px;
+}
+
+#header, #current-time, .time {
+  color: white;
+}
+
+.panel {
+  background: rgb(105, 105, 105);
+  background: rgba(105, 105, 105, .5);
+  padding: 12px 0px 10px 0px;
+}
+
+.panel-title {
+  color: white;
+}
+
+.desc {
+  background-color: black;
+}
