@@ -1,24 +1,25 @@
-//document ready function.
-//The rest of the app will be within this function
+//document ready function
 $(document).ready(function(){
-  //global variables
+
+  //global variables//
   var datetime = null;
   var date = null;
-  var currentTime = moment();
+  var currentTime;
   var trainFreq;
   var firstTrain;
-//military time input for form
+  var trainName;
+  var trainDest;
 
 //function to set current time
 var update = function () {
     date = moment(new Date())
     datetime.text(date.format('h:mm:ss A'));
 };
-
-//display current time in #current-time id within the jumbotron
+//display current time in #current-time id within the jumbotron with update every second
 datetime = $("#current-time")
   update();
   setInterval(update, 1000);
+
 
   //firebase JSON config object
   var config = {
@@ -35,13 +36,15 @@ datetime = $("#current-time")
 
 //variable to call firebase database
  var dataRef = firebase.database();
-////adding train submit event listener
+
+//adding train submit event listener and pushing form results to firebase
 $("#submit").on("click", function() {
 	trainName = $('#nameInput').val().trim();
   trainDest = $('#destInput').val().trim();
   firstTrain = $('#timeInput').val().trim();
   trainFreq = $('#freqInput').val().trim();
-// PUSH NEW ENTRY TO FIREBASE
+
+// pushing of new entry to firebase
 	dataRef.ref().push({
 		name: trainName,
 		dest: trainDest,
@@ -49,44 +52,36 @@ $("#submit").on("click", function() {
     	freq: trainFreq,
     	timeAdded: firebase.database.ServerValue.TIMESTAMP
 	});
-	// NO REFRESH
+	// if values are blank do nothing. Prevents submission of undefined inputs
 	$("input").val('');
     return false;
-});
 
+});
+//grabs data from firebase for each child obkect
 dataRef.ref().on("child_added", function(childSnapshot){
-  var tFrequency = parseInt(trainFreq);
-  console.log(childSnapshot.val().freq);
+
+  var timeBetweenTrains = childSnapshot.val().freq;
+  var name = childSnapshot.val().name;
+  var destination = childSnapshot.val().dest;
+  var firstTrainTime = childSnapshot.val().time;
+  var currentTime = moment();
+  console.log(timeBetweenTrains);
  // The first train
- var firstTime = moment(firstTrain);
- // First Time (pushed back 1 year to make sure it comes before current time)
- var firstTimeConverted = moment(firstTime, "hh:mm").subtract(1, "years");
- console.log(firstTimeConverted);
- // Current Time
- var currentTime = moment();
- console.log("CURRENT TIME: " + moment(currentTime).format("hh:mm"));
+ var firstTimeConverted = moment(firstTrainTime, "HH:mm").subtract(1, "years");
  // Difference between the times
  var diffTime = moment().diff(moment(firstTimeConverted), "minutes");
- console.log("DIFFERENCE IN TIME: " + diffTime);
  // Time apart (remainder)
- var tRemainder = diffTime % tFrequency;
- console.log(tRemainder);
+ var tRemainder = diffTime % timeBetweenTrains;
  // Minute Until Train
- var tMinutesTillTrain = tFrequency - tRemainder;
- console.log("MINUTES TILL TRAIN: " + tMinutesTillTrain);
+ var tMinutesTillTrain = timeBetweenTrains - tRemainder;
  // Next Train
  var nextTrain = moment().add(tMinutesTillTrain, "minutes");
- console.log("ARRIVAL TIME: " + moment(nextTrain).format("hh:mm"));
-  console.log(childSnapshot.val().name);
-  console.log(childSnapshot.val().dest);
-  console.log(childSnapshot.val().time);
-  console.log(childSnapshot.val().freq);
-  console.log(childSnapshot.val().timeAdded);
+//adding train data to table in html
   $('#tschedule').append(
-  		"<tr><td class='text-center' id='nameDisplay'>" + childSnapshot.val().name +
-  		"</td><td class='text-center' id='destDisplay'>" + childSnapshot.val().dest +
-  		"</td><td class='text-center' id='freqDisplay'>" + childSnapshot.val().freq +
-      "</td><td class='text-center' id='nextDisplay'>" + childSnapshot.val().nextTrain +
-      "</td><td class='text-center' id='nextDisplay'>" + childSnapshot.val().tMinutesTillTrain +"</td></tr>");
+  		"<tr><td class='text-center' id='nameDisplay'>" + name +
+  		"</td><td class='text-center' id='destDisplay'>" + destination +
+  		"</td><td class='text-center' id='freqDisplay'>" + timeBetweenTrains +
+      "</td><td class='text-center' id='nextDisplay'>" + nextTrain.format('h:mm A') +
+      "</td><td class='text-center' id='timeBetweenDisplay'>" + tMinutesTillTrain +"</td></tr>");
    });
 });
