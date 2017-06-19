@@ -48,7 +48,7 @@ console.log(trainName,trainDest,firstTime,trainFreq);
 		dest: trainDest,
     	time: firstTrain,
     	freq: trainFreq,
-    	timeAdded: firebase.database.ServerValue.TIMESTAMP,
+    	timeAdded: firebase.database.ServerValue.TIMESTAMP
 	});
 	// NO REFRESH
 	$("input").val('');
