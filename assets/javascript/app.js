@@ -41,7 +41,6 @@ $("#submit").on("click", function() {
   trainDest = $('#destInput').val().trim();
   firstTrain = $('#timeInput').val().trim();
   trainFreq = $('#freqInput').val().trim();
-console.log(trainName,trainDest,firstTime,trainFreq);
 // PUSH NEW ENTRY TO FIREBASE
 	dataRef.ref().push({
 		name: trainName,
