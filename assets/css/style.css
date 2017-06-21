@@ -18,7 +18,7 @@ body {
   margin-top: 10px;
 }
 
-#header, #current-time, .time, #nameDisplay, #destDisplay, #freqDisplay, #nextDisplay, #timeBetweenDisplay {
+td {
   color: white;
 }
 

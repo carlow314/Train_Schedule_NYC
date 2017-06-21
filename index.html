@@ -21,21 +21,22 @@
   </div>
   <div class="container schedule-container">
     <div class="row">
-      <div class="col-md-8 col-md-offset-1 col-lg-8 col-lg-offset-1">
+      <div class="col-md-9 col-lg-9">
         <div class="panel">
           <div class="panel-heading desc">
             <h3 class="panel-title text-center">TRAIN SCHEDULE</h3>
           </div>
           <div class="panel-body">
-            <table class="tschedule" border="1" frame="void" rules="rows">
-              <thead>
-                <tr>
-                  <th class="col-lg-3 col-md-3 text-center">Train Name</th>
-                  <th class="col-lg-2 col-md-2 text-center">Destination</th>
-                  <th class="col-lg-2 col-md-2 text-center">Frequency(minutes)</th>
-                  <th class="col-lg-2 col-md-2 text-center">Next Arrival</th>
-                  <th class="col-lg-2 col-md-2 text-center">Minutes Away</th>
-                </tr>
+            <table border="1" frame="void" rules="rows">
+              <thead id="tableheader">
+
+                <th class="col-lg-3 col-md-3 text-center">Train Name</th>
+                <th class="col-lg-2 col-md-2 text-center">Destination</th>
+                <th class="col-lg-2 col-md-2 text-center">Frequency(minutes)</th>
+                <th class="col-lg-2 col-md-2 text-center">Next Arrival</th>
+                <th class="col-lg-2 col-md-2 text-center">Minutes Away</th>
+                <th class="col-lg-2 col-md-2 text-center">Remove Train</th>
+
                 <thead>
                   <tbody id="tschedule">
                     <tr></tr>
@@ -53,11 +54,11 @@
             <form>
               <div class="form-group">
                 <label for="name">Train Name </label>
-                <input type="text" class="form-control" id="nameInput" placeholder="Green line-Inbound">
+                <input type="text" class="form-control" id="nameInput" placeholder="8 Avenue Express">
               </div>
               <div class="form-group">
                 <label for="dest">Destination </label>
-                <input type="text" class="form-control" id="destInput" placeholder="Lechmere Station">
+                <input type="text" class="form-control" id="destInput" placeholder="Brooklyn">
               </div>
               <div class="form-group">
                 <label class="nextTrain" for="nextTrain">First Train Time</label><label class="milTime">&nbsp;</label>
