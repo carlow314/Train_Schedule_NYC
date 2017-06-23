@@ -1,18 +1,9 @@
 //document ready function
 $(document).ready(function(){
-
-  //global variables//
+//function to set current time
   var datetime = null;
   var date = null;
-  var currentTime;
-  var trainFreq;
-  var firstTrain;
-  var trainName;
-  var trainDest;
-var toDoCount;
-var childKey;
-//function to set current time
-var update = function () {
+  var update = function () {
     date = moment(new Date())
     dateTime.text(date.format('hh:mm A'));
 };
@@ -44,10 +35,10 @@ dateTime = $("#current-time")
 
 //adding train submit event listener and pushing form results to firebase
 $("#submit").on("click", function() {
-	trainName = $('#nameInput').val().trim();
-  trainDest = $('#destInput').val().trim();
-  firstTrain = $('#timeInput').val().trim();
-  trainFreq = $('#freqInput').val().trim();
+	var trainName = $('#nameInput').val().trim();
+  var trainDest = $('#destInput').val().trim();
+  var firstTrain = $('#timeInput').val().trim();
+   var trainFreq = $('#freqInput').val().trim();
 
 // pushing of new entry to firebase
 	dataRef.ref().push({
@@ -69,6 +60,8 @@ $("#submit").on("click", function() {
   $('#tschedule').empty();
  dataRef.ref().on("child_added", function(childSnapshot){
 //define variables for childSnapshot values
+  var toDoCount;
+  var childKey;
   var timeBetweenTrains = childSnapshot.val().freq;
   var name = childSnapshot.val().name;
   var destination = childSnapshot.val().dest;
@@ -113,7 +106,7 @@ var tableRow = $('<tr>').attr('id', toDoCount).attr('data-key', childKey);
         // add class to button
         deleteButton.addClass('delete-button');
         // add X to button
-        deleteButton.append('X');
+        deleteButton.append('Remove');
         // add 1 to counter everytime function runs
         toDoCount++;
         // append all cells to tablerow
