@@ -1,13 +1,7 @@
 //document ready function
 $(document).ready(function(){
-//function to set current time
-  var datetime = null;
-  var date = null;
-  var update = function () {
-    date = moment(new Date())
-    dateTime.text(date.format('hh:mm A'));
-};
-//display current time in #current-time id within the jumbotron with update every second
+
+//configuration data to map to firebase
 var config = {
   apiKey: "AIzaSyDagB4fbwO5j4CPatgW12QExbiZtqcV1KQ",
   authDomain: "train-schedule-eb2b7.firebaseapp.com",
@@ -20,47 +14,55 @@ var config = {
 //call of firebase API
 firebase.initializeApp(config);
 
+//declaration of firebase database variable
 var dataRef = firebase.database();
+
+//establish display of current time to jumbotron element
+var datetime = null;
+var date = null;
+var update = function () {
+  date = moment(new Date())
+  dateTime.text(date.format('hh:mm A'));
+};
+
+//setInterval to update current time every 60 seconds
 dateTime = $("#current-time")
   update();
   setInterval(update, 60000);
 
+//setInterval to update train data every 60 seconds
   updateTrains();
   setInterval(updateTrains,60000);
 
-
-  //firebase JSON config object
-
-//variable to call firebase database;
-
-//adding train submit event listener and pushing form results to firebase
+//train form submit event listener, and subsequently send values to database.
 $("#submit").on("click", function() {
 	var trainName = $('#nameInput').val().trim();
   var trainDest = $('#destInput').val().trim();
   var firstTrain = $('#timeInput').val().trim();
-   var trainFreq = $('#freqInput').val().trim();
+  var trainFreq = $('#freqInput').val().trim();
 
 // pushing of new entry to firebase
 	dataRef.ref().push({
 		name: trainName,
 		dest: trainDest,
-    	time: firstTrain,
-    	freq: trainFreq,
-    	timeAdded: firebase.database.ServerValue.TIMESTAMP
+    time: firstTrain,
+    freq: trainFreq,
+    timeAdded: firebase.database.ServerValue.TIMESTAMP
 	});
+
 	// if values are blank do nothing. Prevents submission of undefined inputs
 	$("input").val('');
     return false;
-
 });
-//grabs data from firebase for each child object
 
-//empty table so that is can be updated every minute with set interval function
+//wrap all display data in update train functions so that it will update every 60 seconds.
+// when SetInterval(updateTrains,60000) is ran the train data will update.
  function updateTrains (){
+  //initially empty the table so that all previous rows that are appended are cleared out.
   $('#tschedule').empty();
+  //call the firebase database to grab all child data that had been sent to firebase through the form on-click event listener
  dataRef.ref().on("child_added", function(childSnapshot){
-//define variables for childSnapshot values
-  var toDoCount;
+//define local variables for updateTrain function
   var childKey;
   var timeBetweenTrains = childSnapshot.val().freq;
   var name = childSnapshot.val().name;
@@ -69,52 +71,49 @@ $("#submit").on("click", function() {
   var train =childSnapshot.val();
   var currentTime = moment();
   var toDoCount = 0;
- // The first train
- var firstTimeConverted = moment(firstTrainTime, "HH:mm").subtract(1, "years");
+ // The first train converted to one year prior to prevent missing any train times
+  var firstTimeConverted = moment(firstTrainTime, "HH:mm").subtract(1, "years");
  // Difference between the times
- var diffTime = moment(currentTime).diff(moment(firstTimeConverted), "minutes");
+  var diffTime = moment().diff(moment(firstTimeConverted), "minutes");
  // Time apart (remainder)
- var tRemainder = diffTime % timeBetweenTrains;
+  var tRemainder = diffTime % timeBetweenTrains;
  // Minute Until Train
- var tMinutesTillTrain = timeBetweenTrains - tRemainder;
+  var tMinutesTillTrain = timeBetweenTrains - tRemainder;
  // Next Train
- var nextTrain = moment(currentTime).add(tMinutesTillTrain, "minutes").format("hh:mm A");
-
-
-var tableRow = $('<tr>').attr('id', toDoCount).attr('data-key', childKey);
-        // Add cell for name
-        var nameColumn= $('<td class="text-center">').text(name);
-        // Add cell for destination
-        var destinationColumn = $('<td class="text-center">').text(destination);
-        // Add cell for frequency
-        var frequencyColumn = $('<td class="text-center">').text(timeBetweenTrains);
-        // Add cell for firstTrainTime
-
-        var nextTrainTimeColumn = $('<td class="text-center">').text(nextTrain,"hh:mm");
-        // Add cell for tMinutesTillTrain
-        var tMinutesTillTrainColumn = $('<td class="text-center">').text(tMinutesTillTrain);
-        // child object from Firebase minus the key
-        var train = childSnapshot.val();
-        // key object for train
-        train.id = childSnapshot.key;
-        // button to delete row
-        var deleteButton = $('<button class= "center-block">');
-        // add attribute to delete-button with counter
-        deleteButton.attr('data-todo', toDoCount);
-        // add ID to train with its key
-        deleteButton.data('train-id', train.id);
-        // add class to button
-        deleteButton.addClass('delete-button');
-        // add X to button
-        deleteButton.append('Remove');
-        // add 1 to counter everytime function runs
-        toDoCount++;
-        // append all cells to tablerow
-        tableRow.append(nameColumn).append(destinationColumn).append(frequencyColumn).append(nextTrainTimeColumn).append(tMinutesTillTrainColumn).append(deleteButton);
-        // add table to DOM
-        $('#tschedule').append(tableRow);
+  var nextTrain = moment().add(tMinutesTillTrain, "minutes").format("hh:mm A");
+// attach key and count to each row so that the remove and update function can be attached to the correct record.
+  var tableRow = $('<tr>').attr('id', toDoCount).attr('data-key', childKey);
+// Add column for name
+  var nameColumn= $('<td class="text-center">').text(name);
+// Add column for destination
+  var destinationColumn = $('<td class="text-center">').text(destination);
+// Add coolumn for frquency
+  var frequencyColumn = $('<td class="text-center">').text(timeBetweenTrains);
+// Add column for next train time
+  var nextTrainTimeColumn = $('<td class="text-center">').text(nextTrain,"hh:mm");
+// Add column for minutes until next train
+  var tMinutesTillTrainColumn = $('<td class="text-center">').text(tMinutesTillTrain);
+// child object from Firebase without the key
+  var train = childSnapshot.val();
+// key object for train
+  train.id = childSnapshot.key;
+// creation of delete button
+  var deleteButton = $('<button class= "center-block">');
+// add attribute to delete-button with counter
+deleteButton.attr('data-todo', toDoCount);
+// add ID to train with its key
+deleteButton.data('train-id', train.id);
+// add class to button
+deleteButton.addClass('btn btn-danger delete-button');
+// add text to button
+deleteButton.append('x');
+// append all cells to tablerow
+tableRow.append(nameColumn).append(destinationColumn).append(frequencyColumn).append(nextTrainTimeColumn).append(tMinutesTillTrainColumn).append(deleteButton);
+// add table to DOM
+  $('#tschedule').append(tableRow);
       });
    };
+   //delete button on click event listener
    $(document).on('click', '.delete-button', function () {
        // add attr to button selected
        var counter = $(this).attr('data-todo');
@@ -125,4 +124,5 @@ var tableRow = $('<tr>').attr('id', toDoCount).attr('data-key', childKey);
        // remove row from DOM
        $('#' + counter).remove();
    });
-});
+
+  });
